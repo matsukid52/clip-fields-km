@@ -50,8 +50,8 @@ class AI2THORR3DRecorder:
     
     def __init__(self, 
                  scene_name: str = "FloorPlan1_1",
-                 width: int = 640,
-                 height: int = 480,
+                 width: int = 256,
+                 height: int = 192,
                  fov: float = 60.0,
                  grid_size: float = 0.25):
         """
@@ -414,10 +414,10 @@ def main():
                        help="Output .r3d file path (default: ai2thor_recording.r3d)")
     parser.add_argument("--frames", type=int, default=100,
                        help="Number of frames to record (default: 100)")
-    parser.add_argument("--width", type=int, default=640,
-                       help="Image width (default: 640)")
-    parser.add_argument("--height", type=int, default=480,
-                       help="Image height (default: 480)")
+    parser.add_argument("--width", type=int, default=256,
+                       help="Image width (default: 256)")
+    parser.add_argument("--height", type=int, default=192,
+                       help="Image height (default: 192)")
     parser.add_argument("--fov", type=float, default=60.0,
                        help="Field of view in degrees (default: 60.0)")
     
