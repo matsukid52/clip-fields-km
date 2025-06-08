@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Optional
 from zipfile import ZipFile
 
-import lzfse
+import liblzfse
 import numpy as np
 import open3d as o3d
 import tqdm
@@ -67,12 +67,10 @@ class R3DSemanticDataset(Dataset):
     def load_depth(self, filepath):
         with self._path.open(filepath, "r") as depth_fh:
             raw_bytes = depth_fh.read()
-            decompressed_bytes = lzfse.decompress(raw_bytes)
+            decompressed_bytes = liblzfse.decompress(raw_bytes)
             depth_img: np.ndarray = np.frombuffer(decompressed_bytes, dtype=np.float32)
 
-        if depth_img.shape[0] == 640 * 480:
-            depth_img = depth_img.reshape((640, 480))
-        elif depth_img.shape[0] == 960 * 720:
+        if depth_img.shape[0] == 960 * 720:
             depth_img = depth_img.reshape((960, 720))  # For a FaceID camera 3D Video
         else:
             depth_img = depth_img.reshape((256, 192))  # For a LiDAR 3D Video
@@ -81,11 +79,9 @@ class R3DSemanticDataset(Dataset):
     def load_conf(self, filepath):
         with self._path.open(filepath, "r") as depth_fh:
             raw_bytes = depth_fh.read()
-            decompressed_bytes = lzfse.decompress(raw_bytes)
+            decompressed_bytes = liblzfse.decompress(raw_bytes)
             depth_img = np.frombuffer(decompressed_bytes, dtype=np.uint8)
-        if depth_img.shape[0] == 640 * 480:
-            depth_img = depth_img.reshape((640, 480))
-        elif depth_img.shape[0] == 960 * 720:
+        if depth_img.shape[0] == 960 * 720:
             depth_img = depth_img.reshape((960, 720))  # For a FaceID camera 3D Video
         else:
             depth_img = depth_img.reshape((256, 192))  # For a LiDAR 3D Video
@@ -113,25 +109,25 @@ class R3DSemanticDataset(Dataset):
             depth_image = self._depth_images[index]
             # Upscale depth image.
             pil_img = Image.fromarray(depth_image)
-            reshaped_img = pil_img.resize((self.rgb_width, self.rgb_height))
+            reshaped_img = pil_img.resize((self.rgb_width, self.rgb_height), Image.Resampling.NEAREST)
             reshaped_img = np.asarray(reshaped_img)
             self._reshaped_depth.append(reshaped_img)
 
             # Upscale confidence as well
             confidence = self._confidences[index]
             conf_img = Image.fromarray(confidence)
-            reshaped_conf = conf_img.resize((self.rgb_width, self.rgb_height))
+            reshaped_conf = conf_img.resize((self.rgb_width, self.rgb_height), Image.Resampling.NEAREST)
             reshaped_conf = np.asarray(reshaped_conf)
             self._reshaped_conf.append(reshaped_conf)
 
     def get_global_xyz(self, index, depth_scale=1000.0, only_confident=True):
         reshaped_img = np.copy(self._reshaped_depth[index])
-        # If only confident, set non-confident points to NaN.
-        # This is the crucial step: we also filter by depth, to match the mask
-        # generation logic in DeticDenseLabelledDataset.
+
+        # If only confident, replace not confident points with nans
         if only_confident:
-            valid_mask = (self._reshaped_conf[index] == 2) & (reshaped_img < 3.0)
-            reshaped_img[~valid_mask] = np.nan
+            reshaped_img[self._reshaped_conf[index] != 2] = np.nan
+            # valid_mask = (self._reshaped_conf[index] == 2) & (reshaped_img < 3.0)
+            # reshaped_img[~valid_mask] = np.nan
 
         depth_o3d = o3d.geometry.Image(
             np.ascontiguousarray(depth_scale * reshaped_img).astype(np.float32)
