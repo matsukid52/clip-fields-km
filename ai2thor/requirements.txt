@@ -1,0 +1,7 @@
+ai2thor==5.0.0
+numpy
+Pillow
+pygame
+pyquaternion
+lzfse
+tqdm 
