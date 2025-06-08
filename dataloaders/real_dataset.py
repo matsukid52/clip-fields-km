@@ -260,7 +260,13 @@ class DeticDenseLabelledDataset(Dataset):
                     real_mask = pred_mask[valid_mask]
                     real_mask_rect = valid_mask & pred_mask
                     # Go over each instance and add it to the DB.
-                    total_points = len(reshaped_coordinates[real_mask])
+                    try:
+                        total_points = len(reshaped_coordinates[real_mask])
+                        print("real_mask", real_mask.shape[0])
+                    except:
+                        print(reshaped_coordinates)
+                        print(real_mask)
+                        print("real_mask", real_mask.shape[0])
                     resampled_indices = torch.rand(total_points) < self._subsample_prob
                     self._label_xyz.append(
                         reshaped_coordinates[real_mask][resampled_indices]
@@ -418,11 +424,19 @@ class DeticDenseLabelledDataset(Dataset):
                 .squeeze(0)
                 .bool()
             )
-            reshaped_coordinates = torch.as_tensor(coordinates)
+            # if valid_mask.dim() == 2:
+            #     valid_mask = valid_mask.flatten()
+
+            if len(coordinates.shape) == 3:
+                reshaped_coordinates = einops.rearrange(coordinates, "h w c -> (h w) c")
+            else:
+                reshaped_coordinates = torch.as_tensor(coordinates)
+            print("valid_mask", valid_mask.sum().item())
             return reshaped_coordinates, valid_mask
         else:
             reshaped_coordinates = einops.rearrange(coordinates, "c h w -> (h w) c")
             valid_mask = torch.ones_like(coordinates).mean(dim=0).bool()
+            print("valid_mask", valid_mask.sum().item())
             return reshaped_coordinates, valid_mask
 
     def __getitem__(self, idx):

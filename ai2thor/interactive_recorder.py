@@ -27,10 +27,12 @@ import open3d as o3d
 # from quaternion import as_rotation_matrix, quaternion as np_quaternion
 
 class InteractiveRecorder:
-    def __init__(self, scene_name="FloorPlan1", width=640, height=480, fov=90, frame_rate=30, mouse_sensitivity=0.1):
+    def __init__(self, scene_name="FloorPlan1", rgb_width=960, rgb_height=720, depth_width=256, depth_height=192, fov=90, frame_rate=30, mouse_sensitivity=0.1):
         self.scene_name = scene_name
-        self.width = int(width)
-        self.height = int(height)
+        self.rgb_width = int(rgb_width)
+        self.rgb_height = int(rgb_height)
+        self.depth_width = int(depth_width)
+        self.depth_height = int(depth_height)
         self.fov = fov
         self.frame_rate = frame_rate
         self.frame_duration = 1.0 / frame_rate
@@ -44,19 +46,15 @@ class InteractiveRecorder:
             agentMode="locobot",
             visibilityDistance=1.5,
             scene=self.scene_name,
-            # Render RGB in high-res, but depth in low-res, as clip-fields will upscale it
-            width=self.width,
-            height=self.height,
+            # Render at high resolution to get good RGB and Depth
+            width=self.rgb_width,
+            height=self.rgb_height,
             renderDepthImage=True,
             renderInstanceSegmentation=False,
         )
         
-        # Get low-res depth dimensions from the controller, which is what clip-fields expects
-        self.depth_width = self.controller.last_event.depth_frame.shape[1]
-        self.depth_height = self.controller.last_event.depth_frame.shape[0]
-
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.screen = pygame.display.set_mode((self.rgb_width, self.rgb_height))
         pygame.display.set_caption("AI2-THOR Interactive Recorder")
         self.font = pygame.font.SysFont("Arial", 24)
 
@@ -196,7 +194,7 @@ class InteractiveRecorder:
 
     def get_intrinsics(self):
         # This must match the RGB dimensions, as depth will be upscaled to it
-        w, h = self.width, self.height
+        w, h = self.rgb_width, self.rgb_height
         fov = self.fov
         
         fx = (w / 2.0) / np.tan(np.deg2rad(fov / 2.0))
@@ -219,10 +217,8 @@ class InteractiveRecorder:
         # Prepare metadata. This now reflects the true data being saved.
         poses = [frame["pose"] for frame in self.recorded_data]
         metadata = {
-            "w": self.width,
-            "h": self.height,
-            "depth_w": self.depth_width, # Store original depth dimensions
-            "depth_h": self.depth_height,
+            "w": self.rgb_width,
+            "h": self.rgb_height,
             "fps": self.frame_rate,
             "K": self.get_intrinsics(),
             "poses": poses,
@@ -237,14 +233,19 @@ class InteractiveRecorder:
             rgb_img = Image.fromarray(frame_data["rgb"])
             rgb_img.save(rgbd_dir / f"{i}.jpg")
             
-            # Save Depth (Low-Res, Float32)
-            depth_map = frame_data["depth"].astype(np.float32)
-            compressed_depth = lzfse.compress(depth_map.tobytes())
+            # Downscale, then Save Depth (Low-Res, Float32)
+            high_res_depth = frame_data["depth"]
+            depth_pil = Image.fromarray(high_res_depth)
+            # Use NEAREST to avoid creating interpolated depth values
+            low_res_depth_pil = depth_pil.resize((self.depth_width, self.depth_height), Image.Resampling.NEAREST)
+            low_res_depth_map = np.asarray(low_res_depth_pil).astype(np.float32)
+
+            compressed_depth = lzfse.compress(low_res_depth_map.tobytes())
             with open(rgbd_dir / f"{i}.depth", "wb") as f:
                 f.write(compressed_depth)
 
             # Save Confidence map (matches low-res depth)
-            conf_map = (np.ones_like(depth_map, dtype=np.uint8) * 2) # All points are confident
+            conf_map = (np.ones_like(low_res_depth_map, dtype=np.uint8) * 2) # All points are confident
             compressed_conf = lzfse.compress(conf_map.tobytes())
             with open(rgbd_dir / f"{i}.conf", "wb") as f:
                 f.write(compressed_conf)
@@ -280,8 +281,10 @@ class InteractiveRecorder:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AI2-THOR Interactive Recorder for clip-fields")
     parser.add_argument("--scene", type=str, default="FloorPlan_Train1_1", help="AI2-THOR scene name to load.")
-    parser.add_argument("--width", type=int, default=640, help="Width of the RGB window.")
-    parser.add_argument("--height", type=int, default=480, help="Height of the RGB window.")
+    parser.add_argument("--rgb_width", type=int, default=960, help="Width of the RGB window and images.")
+    parser.add_argument("--rgb_height", type=int, default=720, help="Height of the RGB window and images.")
+    parser.add_argument("--depth_width", type=int, default=256, help="Width of the saved depth map.")
+    parser.add_argument("--depth_height", type=int, default=192, help="Height of the saved depth map.")
     parser.add_argument("--fov", type=int, default=90, help="Field of View.")
     parser.add_argument("--fps", type=int, default=30, help="Recording frame rate.")
     parser.add_argument("--mouse_sensitivity", type=float, default=0.2, help="Mouse sensitivity for rotation.")
@@ -290,8 +293,10 @@ if __name__ == "__main__":
     
     recorder = InteractiveRecorder(
         scene_name=args.scene,
-        width=args.width,
-        height=args.height,
+        rgb_width=args.rgb_width,
+        rgb_height=args.rgb_height,
+        depth_width=args.depth_width,
+        depth_height=args.depth_height,
         fov=args.fov,
         frame_rate=args.fps,
         mouse_sensitivity=args.mouse_sensitivity
