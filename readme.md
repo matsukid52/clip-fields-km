@@ -14,8 +14,17 @@ To properly install this repo and all the dependencies, follow these instruction
 
 ```
 # Clone this repo.
-git clone --recursive https://github.com/notmahi/clip-fields
+git clone --recursive git@github.com:mkid52/clip-fields-km.git
 cd clip-fields
+
+#conda install.
+wget https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh -P /root/HSR/DL
+bash /root/HSR/DL/Anaconda3-2025.06-0-Linux-x86_64.sh
+source ~/anaconda3/bin/activate
+conda --version
+
+#how to delete conda.
+conda remove -n cf --all
 
 # Create conda environment and install the dependencies.
 conda create -n cf python=3.8
