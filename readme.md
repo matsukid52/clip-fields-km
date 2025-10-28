@@ -20,16 +20,17 @@ cd clip-fields-km
 wget https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh
 bash /root/HSR/DL/Anaconda3-2025.06-0-Linux-x86_64.sh
 source ~/anaconda3/bin/activate
+#インストールされているか確認
 conda --version
 ```
 
-・Anacondaのコマンド
+・Anacondaのコマンド例
 ```
 conda info -e
 conda remove -n cf --all
 ```
 
-3. 仮想環境作成,依存環境をインストール
+3. 仮想環境作成と依存環境をインストール
 ```
 conda create -n cf python=3.8
 conda activate cf
@@ -37,25 +38,41 @@ conda install -y pytorch==2.4.1 torchvision torchaudio -c pytorch -c nvidia
 pip install -r requirements.txt
 ```
 
-4. 
+4. CUDA設定とgridencoderビルド
+gridencoder はC++/CUDA拡張を含むため、環境に合わせて再ビルドが必要です。
+他環境でビルド済みの .so を使用すると、以下のようなエラーが発生します：
+```vbnet
+ImportError: /usr/lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found
+```
+これを防ぐため、自分の環境で再ビルドする
+
 ```
 cd gridencoder
+# CUDAパスを設定（例: CUDA 11.8）
 which nvcc
-```
-For me $which nvcc gives public/apps/cuda/11.8/bin/nvcc, so I used the following part
-```
-export CUDA_HOME=/public/apps/cuda/11.8
-python setup.py install
+# 例: /usr/local/cuda-11.8/bin/nvcc が返る場合
+export CUDA_HOME=/usr/local/cuda-11.8
+
+# ninjaをインストール（PyTorch拡張ビルドに必須）
+conda install -y ninja
+
+# GridEncoderを再ビルド＆インストール
+pip install .
+#動作確認コマンド
+python -c "import gridencoder"
 cd ..
 ```
 
+上記を実行すると、gridencoder が現在の環境でコンパイル・登録され、
+python -c "import gridencoder" が正常に動作する
+
 ```
 ```
 
-## Interactive Tutorial and Evaluation
+5. インタラクティブチュートリアルと評価
 We have an interactive tutorial and evaluation notebook that you can use to explore the model and evaluate it on your own data. You can find them in the [`demo/`](https://github.com/notmahi/clip-fields/tree/main/demo) directory, that you can run after installing the dependencies.
 
-## Training a CLIP-Field directly
+6. Training a CLIP-Field directly
 Once you have the dependencies installed, you can run the training script `train.py` with any [.r3d](https://record3d.app/) files that you have! If you just want to try out a sample, download the [sample data](https://osf.io/famgv) `nyu.r3d` and run the following command.
 
 ```
