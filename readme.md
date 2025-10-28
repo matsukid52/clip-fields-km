@@ -8,7 +8,12 @@ https://user-images.githubusercontent.com/3000253/195213301-43eae6e8-4516-4b8d-9
 **Tl;dr** CLIP-Field is a novel weakly supervised approach for learning a semantic robot memory that can respond to natural language queries solely from raw RGB-D and odometry data with no extra human labelling. It combines the image and language understanding capabilites of novel vision-language models (VLMs) like CLIP, large language models like sentence BERT, and open-label object detection models like Detic, and with spatial understanding capabilites of neural radiance field (NeRF) style architectures to build a spatial database that holds semantic information in it.
 
 ## 環境構築
-###　使用環境
+### 使用環境
+ALIENWARE
+GeForce GTX 2070 ,Turing　（CUDA SDK version：10.0-13.0,CUDA Version: 13.0まで対応） 
+Driver Version:580.95.05　CUDA：12.4
+PyTorch:2.4.1（2025現在のHSR）NumPy：1.22.2
+
 
 1. リポジトリをクローン
 ```
@@ -69,9 +74,10 @@ python -c "import gridencoder" が正常に動作する
 
 5. インタラクティブチュートリアルと評価
 依存パッケージのインストールが完了したら,[`demo/`](https://github.com/notmahi/clip-fields/tree/main/demo) ディレクトリ内にある.インタラクティブなチュートリアルおよび評価用ノートブックを実行することで,モデルの動作を確認したり,自分のデータで評価を行うことができる.
+example.pyはgooglecolabのソースコードをまとめたプログラムである.
 
 
-6. CLIP-Field の学習
+7. CLIP-Field の学習
 依存環境をインストールした後,任意の [.r3d](https://record3d.app/) ファイルを使用して
 train.py スクリプトを実行することで,サンプルデータを学習させることができる.
 [sample data](https://osf.io/famgv) `nyu.r3d`を使用して試す場合は,以下を実行する.
