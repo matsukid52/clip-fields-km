@@ -8,8 +8,9 @@ https://user-images.githubusercontent.com/3000253/195213301-43eae6e8-4516-4b8d-9
 **Tl;dr** CLIP-Field is a novel weakly supervised approach for learning a semantic robot memory that can respond to natural language queries solely from raw RGB-D and odometry data with no extra human labelling. It combines the image and language understanding capabilites of novel vision-language models (VLMs) like CLIP, large language models like sentence BERT, and open-label object detection models like Detic, and with spatial understanding capabilites of neural radiance field (NeRF) style architectures to build a spatial database that holds semantic information in it.
 
 ## 環境構築
+###　使用環境
 
-1.リポジトリをクローン
+1. リポジトリをクローン
 ```
 git clone --recursive git@github.com:mkid52/clip-fields-km.git
 cd clip-fields-km
@@ -20,7 +21,7 @@ cd clip-fields-km
 wget https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh
 bash /root/HSR/DL/Anaconda3-2025.06-0-Linux-x86_64.sh
 source ~/anaconda3/bin/activate
-#インストールされているか確認
+#動作確認
 conda --version
 ```
 
@@ -69,13 +70,14 @@ python -c "import gridencoder" が正常に動作する
 5. インタラクティブチュートリアルと評価
 依存パッケージのインストールが完了したら,[`demo/`](https://github.com/notmahi/clip-fields/tree/main/demo) ディレクトリ内にある.インタラクティブなチュートリアルおよび評価用ノートブックを実行することで,モデルの動作を確認したり,自分のデータで評価を行うことができる.
 
+
 6. CLIP-Field の学習
 依存環境をインストールした後,任意の [.r3d](https://record3d.app/) ファイルを使用して
-train.py スクリプトを実行することで,CLIP-Fieldの学習を行うことができる.
+train.py スクリプトを実行することで,サンプルデータを学習させることができる.
 [sample data](https://osf.io/famgv) `nyu.r3d`を使用して試す場合は,以下を実行する.
 
 ```
-python train.py dataset_path=nyu.r3d
+python train.py dataset_path=nyu.r3d device=cuda
 ```
 
 7. LSegを使用する場合
@@ -92,9 +94,6 @@ python train.py dataset_path=nyu.r3d use_lseg=true
 設定ファイルのカスタマイズ
 利用可能な設定オプションは config/train.yaml に記載されている.特定のラベルセットで学習したい場合は,custom_labels フィールドを編集して使用するラベルを指定する.
 
-
-## Acknowledgements
-We would like to thank the following projects for making their code and models available, which we relied upon heavily in this work.
 * [CLIP](https://github.com/openai/CLIP) with [MIT License](https://github.com/openai/CLIP/blob/main/LICENSE)
 * [Detic](https://github.com/facebookresearch/Detic/) with [Apache License 2.0](https://github.com/facebookresearch/Detic/blob/main/LICENSE)
 * [Torch NGP](https://github.com/ashawkey/torch-ngp) with [MIT License](https://github.com/ashawkey/torch-ngp/blob/main/LICENSE)
