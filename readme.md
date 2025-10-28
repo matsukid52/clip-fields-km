@@ -80,6 +80,13 @@ train.py スクリプトを実行することで,サンプルデータを学習�
 python train.py dataset_path=nyu.r3d device=cuda
 ```
 
+学習が完了すると,clip_implicit_model下に学習データが出力される.
+```
+cd clip_implicit_model
+ls
+#implicit_scene_label_model_latest.pt があればOK.
+```
+
 7. LSegを使用する場合
 オープンラベルアノテーションの追加ソースとして, [LSeg demo model](https://github.com/isl-org/lang-seg#-try-demo-now)を利用する場合は,LSegのデモモデルをダウンロードし,以下のパスに配置する.
 
