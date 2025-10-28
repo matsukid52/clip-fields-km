@@ -70,22 +70,30 @@ python -c "import gridencoder" が正常に動作する
 ```
 
 5. インタラクティブチュートリアルと評価
-We have an interactive tutorial and evaluation notebook that you can use to explore the model and evaluate it on your own data. You can find them in the [`demo/`](https://github.com/notmahi/clip-fields/tree/main/demo) directory, that you can run after installing the dependencies.
+依存パッケージのインストールが完了したら,[`demo/`](https://github.com/notmahi/clip-fields/tree/main/demo) ディレクトリ内にある.インタラクティブなチュートリアルおよび評価用ノートブックを実行することで,モデルの動作を確認したり,自分のデータで評価を行うことができる.
 
-6. Training a CLIP-Field directly
-Once you have the dependencies installed, you can run the training script `train.py` with any [.r3d](https://record3d.app/) files that you have! If you just want to try out a sample, download the [sample data](https://osf.io/famgv) `nyu.r3d` and run the following command.
+6. CLIP-Field の学習
+依存環境をインストールした後,任意の [.r3d](https://record3d.app/) ファイルを使用して
+train.py スクリプトを実行することで,CLIP-Fieldの学習を行うことができる.
+[sample data](https://osf.io/famgv) `nyu.r3d`を使用して試す場合は,以下を実行する.
 
 ```
 python train.py dataset_path=nyu.r3d
 ```
 
-If you want to use LSeg as an additional source of open-label annotations, you should download the [LSeg demo model](https://github.com/isl-org/lang-seg#-try-demo-now) and place it in the `path_to_LSeg/checkpoints/demo_e200.ckpt`. Then, you can run the following command.
+7. LSegを使用する場合
+オープンラベルアノテーションの追加ソースとして, [LSeg demo model](https://github.com/isl-org/lang-seg#-try-demo-now)を利用する場合は,LSegのデモモデルをダウンロードし,以下のパスに配置する.
 
+```
+path_to_LSeg/checkpoints/demo_e200.ckpt
+```
+その後,以下のコマンドでLSegを有効にして学習を実行する.
 ```
 python train.py dataset_path=nyu.r3d use_lseg=true
 ```
 
-You can check out the `config/train.yaml` for a list of possible configuration options. In particular, if you want to train with any particular set of labels, you can specify them in the `custom_labels` field in `config/train.yaml`.
+設定ファイルのカスタマイズ
+利用可能な設定オプションは config/train.yaml に記載されている.特定のラベルセットで学習したい場合は,custom_labels フィールドを編集して使用するラベルを指定する.
 
 
 ## Acknowledgements
