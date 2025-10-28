@@ -42,7 +42,7 @@ pip install -r requirements.txt
 cd gridencoder
 which nvcc
 ```
-# For me $which nvcc gives public/apps/cuda/11.8/bin/nvcc, so I used the following part
+For me $which nvcc gives public/apps/cuda/11.8/bin/nvcc, so I used the following part
 ```
 export CUDA_HOME=/public/apps/cuda/11.8
 python setup.py install
