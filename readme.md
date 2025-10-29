@@ -95,7 +95,7 @@ ls
 
 8. 実行 \
 `example.py`を実行すると結果が表示される. \
-![a](Screenshot from 2025-10-29 13-07-24.png)
+[image](exapmle1.png)
 ![]()
 
 7. LSegを使用する場合
