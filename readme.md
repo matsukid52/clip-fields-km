@@ -95,12 +95,11 @@ ls
 
 8. 実行 \
 `example.py`を実行すると結果が表示される. \
-![image](pictures/example1.png)
-![image](pictures/example2.png)
-![image](pictures/example3.png)
-<img src=/pictures/example4.png width="100px" height="100px">
-![image](pictures/example4.png)
-![image](pictures/example5.png)
+<img src=/pictures/example1.png width="500px" height="500px">
+<img src=/pictures/example2.png width="500px" height="500px">
+<img src=/pictures/example3.png width="500px" height="500px">
+<img src=/pictures/example4.png width="500px" height="500px">
+<img src=/pictures/example5.png width="500px" height="500px">
 ![]()
 
 7. LSegを使用する場合
