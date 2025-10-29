@@ -96,6 +96,7 @@ ls
 8. 実行 \
 `example.py`を実行すると結果が表示される. \
 [image](exapmle1.png)
+[image](exapmle2.png)
 ![]()
 
 7. LSegを使用する場合
