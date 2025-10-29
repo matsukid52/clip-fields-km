@@ -94,7 +94,9 @@ ls
 ```
 
 8. 実行 \
-`example.py`を実行すると結果が表示される.
+`example.py`を実行すると結果が表示される. \
+![a](Screenshot from 2025-10-29 13-07-24.png)
+![]()
 
 7. LSegを使用する場合
 オープンラベルアノテーションの追加ソースとして, [LSeg demo model](https://github.com/isl-org/lang-seg#-try-demo-now)を利用する場合は,LSegのデモモデルをダウンロードし,以下のパスに配置する.
