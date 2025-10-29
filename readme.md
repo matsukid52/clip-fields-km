@@ -94,7 +94,7 @@ ls
 ```
 
 8. 実行 \
-`example.py`を実行すると結果が表示される. \
+`example.py`を実行すると結果が表示される. 
 <img src=/pictures/example1.png width="500px" height="500px">
 <img src=/pictures/example2.png width="500px" height="500px">
 <img src=/pictures/example3.png width="500px" height="500px">
