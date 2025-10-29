@@ -93,7 +93,7 @@ ls
 #implicit_scene_label_model_latest.pt があればOK.
 ```
 
-8. 実行
+8. 実行 \
 `example.py`を実行すると結果が表示される.
 
 7. LSegを使用する場合
