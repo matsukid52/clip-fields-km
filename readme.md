@@ -95,8 +95,11 @@ ls
 
 8. 実行 \
 `example.py`を実行すると結果が表示される. \
-[image](exapmle1.png)
-[image](exapmle2.png)
+![image](pictures/example1.png)
+![image](pictures/example2.png)
+![image](pictures/example3.png)
+![image](pictures/example4.png)
+![image](pictures/example5.png)
 ![]()
 
 7. LSegを使用する場合
