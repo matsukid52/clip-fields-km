@@ -24,7 +24,7 @@ cd clip-fields-km
 2. Anacondaをインストール
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh
-bash /root/HSR/DL/Anaconda3-2025.06-0-Linux-x86_64.sh
+bash /root/HSR/clip-fields-km/Anaconda3-2025.06-0-Linux-x86_64.sh
 source ~/anaconda3/bin/activate
 #動作確認
 conda --version
@@ -56,7 +56,7 @@ ImportError: /usr/lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found
 cd gridencoder
 # CUDAパスを設定（例: CUDA 11.8）
 which nvcc
-# 例: /usr/local/cuda-11.8/bin/nvcc が返る場合
+# 例: /usr/local/cuda-11.8/bin/nvcc が返る場合/usr/local/cuda/bin/nvcc
 export CUDA_HOME=/usr/local/cuda-11.8
 
 # ninjaをインストール（PyTorch拡張ビルドに必須）
