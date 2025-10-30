@@ -64,9 +64,9 @@ conda install -y ninja
 
 # GridEncoderを再ビルド＆インストール
 pip install .
+cd ..
 #動作確認コマンド
 python -c "import gridencoder"
-cd ..
 ```
 
 上記を実行すると、gridencoder が現在の環境でコンパイル・登録され、
