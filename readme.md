@@ -10,9 +10,11 @@ https://user-images.githubusercontent.com/3000253/195213301-43eae6e8-4516-4b8d-9
 ## 環境構築
 ### 使用環境
 ALIENWARE
-GeForce GTX 2070 ,Turing　（CUDA SDK version：10.0-13.0,CUDA Version: 13.0まで対応） 
-Driver Version:580.95.05　CUDA：12.4
-PyTorch:2.4.1（2025現在のHSR）NumPy：1.22.2
+- GeForce GTX 2070 ,Turing　（CUDA SDK version：10.0-13.0,CUDA Version: 13.0まで対応） 
+- Driver Version:580.95.05
+- CUDA：12.4
+- PyTorch:2.4.1（2025現在のHSR）
+- NumPy：1.22.2
 
 
 1. リポジトリをクローン
@@ -24,7 +26,7 @@ cd clip-fields-km
 2. Anacondaをインストール
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh
-bash /root/HSR/clip-fields-km/Anaconda3-2025.06-0-Linux-x86_64.sh
+bash Anaconda3-2025.06-0-Linux-x86_64.sh
 source ~/anaconda3/bin/activate
 #動作確認
 conda --version
