@@ -58,8 +58,8 @@ ImportError: /usr/lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found
 cd gridencoder
 # CUDAパスを設定（例: CUDA 11.8）
 which nvcc
-# 例: /usr/local/cuda-11.8/bin/nvcc が返る場合/usr/local/cuda/bin/nvcc
-export CUDA_HOME=/usr/local/cuda-11.8
+# 例: /usr/local/cuda/bin/nvcc が返る場合
+export CUDA_HOME=/usr/local/cuda
 
 # ninjaをインストール（PyTorch拡張ビルドに必須）
 conda install -y ninja
@@ -68,11 +68,9 @@ conda install -y ninja
 pip install .
 cd ..
 #動作確認コマンド
-python -c "import gridencoder"
+python -c "import gridencoder; print(gridencoder.__file__)"
+# /root/HSR/clip-fields-km/gridencoder/__init__.py であれば良い.
 ```
-
-上記を実行すると、gridencoder が現在の環境でコンパイル・登録され、
-python -c "import gridencoder" が正常に動作する
 
 5. インタラクティブチュートリアルと評価
 依存パッケージのインストールが完了したら,[`demo/`](https://github.com/notmahi/clip-fields/tree/main/demo) ディレクトリ内にある.インタラクティブなチュートリアルおよび評価用ノートブックを実行することで,モデルの動作を確認したり,自分のデータで評価を行うことができる.
