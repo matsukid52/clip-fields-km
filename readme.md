@@ -23,7 +23,8 @@ git clone --recursive git@github.com:mkid52/clip-fields-km.git
 cd clip-fields-km
 ```
 
-2. Anacondaをインストール
+2. Anacondaをインストール \
+[Ubuntu22.04LTSにAnaconda3をインストールする](https://qiita.com/sakai_noriko/items/53d65f3177b891f6cfcc)
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh
 bash Anaconda3-2025.06-0-Linux-x86_64.sh
