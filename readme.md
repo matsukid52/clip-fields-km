@@ -14,7 +14,8 @@ ALIENWARE
 - Driver Version:580.95.05
 - CUDA：12.4
 - PyTorch:2.4.1（2025現在のHSR）
-- NumPy：1.22.2
+- NumPy：1.22.2 \
+[Record3D](https://record3d.app/)
 
 
 1. リポジトリをクローン
