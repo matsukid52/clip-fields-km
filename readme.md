@@ -9,16 +9,17 @@ https://user-images.githubusercontent.com/3000253/195213301-43eae6e8-4516-4b8d-9
 
 ## 環境構築
 ### 使用環境
-ALIENWARE
+#### ALIENWARE
+- Ubuntu 20.04.6 LTS
 - GeForce GTX 2070 ,Turing　（CUDA SDK version：10.0-13.0,CUDA Version: 13.0まで対応） 
 - Driver Version:580.95.05
 - CUDA：12.4
 - PyTorch:2.4.1（2025現在のHSR）
-- NumPy：1.22.2 \
-[Record3D](https://record3d.app/)
+- NumPy：1.22.2 
+- [Record3D](https://record3d.app/) 
 
 
-1. リポジトリをクローン
+1. このリポジトリをクローンする
 ```
 git clone --recursive git@github.com:mkid52/clip-fields-km.git
 cd clip-fields-km
