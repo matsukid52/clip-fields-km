@@ -86,6 +86,9 @@ train.py スクリプトを実行することで,サンプルデータを学習�
 [sample data](https://osf.io/famgv) `nyu.r3d`を使用して試す場合は,以下を実行する.
 
 ```
+# GPUの使用量を確認しながら実行する
+watch -n -1 nvidia-smi
+
 python train.py dataset_path=nyu.r3d device=cuda
 ```
 
