@@ -112,6 +112,8 @@ class Record3DReceiver:
 
                 # Save RGB
                 rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+                cv2.imshow("Record3D Stream", rgb_bgr)
+                cv2.waitKey(1)
                 cv2.imwrite(os.path.join(self.rgbd_dir, f"{frame_idx}.jpg"), rgb_bgr)
 
                 # Save Depth (Compressed)
@@ -135,6 +137,7 @@ class Record3DReceiver:
             print("\nStopping...")
         finally:
             self.save_metadata()
+            cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     receiver = Record3DReceiver(output_dir="/app/output")

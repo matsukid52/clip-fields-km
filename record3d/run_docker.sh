@@ -16,4 +16,7 @@ docker run --rm -it \
     -v /dev/bus/usb:/dev/bus/usb \
     -v /var/run/usbmuxd:/var/run/usbmuxd \
     -v "$(pwd)/output:/app/output" \
+    -v "$(pwd)/src:/app/src" \
+    -e DISPLAY=$DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
     record3d_receiver
