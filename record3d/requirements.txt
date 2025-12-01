@@ -1,4 +1,4 @@
 record3d
-numpy
-opencv-python
+#numpy
+#opencv-python-headless
 lzfse

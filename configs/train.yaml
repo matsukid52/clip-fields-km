@@ -7,23 +7,24 @@ deterministic_id: false
 device: cuda
 use_cache: false
 # 学習時に1回のイテレーションで処理する3D点の数を指定するパラメータ
-# batch_size: 12544→625
+# batch_size: 12544
 batch_size: 6084
 
 # Dataset details
-dataset_path: nyu.r3d
+dataset_path: test.r3d
 cache_result: true
 cache_path: detic_labeled_dataset.pt
 saved_dataset_path: detic_labeled_dataset.pt
 
 # Data loading and labelling specs
 # 何フレームごとにサンプリングするか,5フレームごとに1フレームを使用する
-# sample_freq: 5→10
-sample_freq: 10
+sample_freq: 5
+
 detic_threshold: 0.4
+
 # 各検出されたオブジェクトマスク内の3D点を保持する確率,各オブジェクトの点群の約20%がランダムに選択されて学習に使用する
-subsample_prob: 0.2
-# subsample_prob: 0.1
+subsample_prob: 0.1
+
 use_lseg: false
 use_extra_classes: false
 use_gt_classes_in_detic: true
@@ -40,14 +41,14 @@ log2_hashmap_size: 20
 # Training specs
 seed: 42
 epochs: 100
-# epochs: 20
 exp_decay_coeff: 0.5
 image_to_label_loss_ratio: 1.0
 label_to_image_loss_ratio: 1.0
 instance_loss_scale: 100.0
 epoch_size: 3e6
 dataparallel: false
-num_workers: 10
+# num_workers: 10
+num_workers: 0
 
 # Debug purposes, visualize Detic results
 visualize_detic_results: false
@@ -92,99 +93,110 @@ hydra:
 
 # Add any custom labels you want here
 custom_labels:
-  - kitchen counter
-  - kitchen cabinet
-  - stove
-  - cabinet
-  - bathroom counter
-  - refrigerator
-  - microwave
-  - oven
-  - fireplace
-  - door
-  - sink
-  - furniture
-  - dish rack
-  - dining table
-  - shelf
-  - bar
-  - dishwasher
-  - toaster oven
-  - toaster
-  - mini fridge
-  - soap dish
-  - coffee maker
-  - table
-  - bowl
-  - rack
-  - bulletin board
-  - water cooler
-  - coffee kettle
-  - lamp
-  - plate
-  - window
-  - dustpan
-  - trash bin
-  - ceiling
-  - doorframe
-  - trash can
-  - basket
-  - wall
-  - bottle
-  - broom
-  - bin
-  - paper
-  - storage container
-  - box
-  - tray
-  - whiteboard
-  - decoration
-  - board
-  - cup
-  - windowsill
-  - potted plant
-  - light
-  - machine
-  - fire extinguisher
-  - bag
-  - paper towel roll
-  - chair
-  - book
-  - fire alarm
-  - blinds
-  - crate
-  - tissue box
-  - towel
-  - paper bag
-  - column
-  - fan
-  - object
-  - range hood
-  - plant
-  - structure
-  - poster
-  - mat
-  - water bottle
-  - power outlet
-  - storage bin
-  - radiator
-  - picture
-  - water pitcher
-  - pillar
-  - light switch
-  - bucket
-  - storage organizer
-  - vent
-  - counter
-  - ceiling light
-  - case of water bottles
-  - pipe
-  - scale
-  - recycling bin
-  - clock
-  - sign
-  - folded chair
-  - power strip
+    - desk
+    - chair
+    - trash can
+    - vending machine
+    - vase
+    - vacuum cleaner
+    - water heater
+    - microwave oven
+    - signboard
+
+    
+  # - kitchen counter
+  # - kitchen cabinet
+  # - stove
+  # - cabinet
+  # - bathroom counter
+  # - refrigerator
+  # - microwave
+  # - oven
+  # - fireplace
+  # - door
+  # - sink
+  # - furniture
+  # - dish rack
+  # - dining table
+  # - shelf
+  # - bar
+  # - dishwasher
+  # - toaster oven
+  # - toaster
+  # - mini fridge
+  # - soap dish
+  # - coffee maker
+  # - table
+  # - bowl
+  # - rack
+  # - bulletin board
+  # - water cooler
+  # - coffee kettle
+  # - lamp
+  # - plate
+  # - window
+  # - dustpan
+  # - trash bin
+  # - ceiling
+  # - doorframe
+  # - trash can
+  # - basket
+  # - wall
+  # - bottle
+  # - broom
+  # - bin
+  # - paper
+  # - storage container
+  # - box
+  # - tray
+  # - whiteboard
+  # - decoration
+  # - board
+  # - cup
+  # - windowsill
+  # - potted plant
+  # - light
+  # - machine
+  # - fire extinguisher
+  # - bag
+  # - paper towel roll
+  # - chair
+  # - book
+  # - fire alarm
+  # - blinds
+  # - crate
+  # - tissue box
+  # - towel
+  # - paper bag
+  # - column
+  # - fan
+  # - object
+  # - range hood
+  # - plant
+  # - structure
+  # - poster
+  # - mat
+  # - water bottle
+  # - power outlet
+  # - storage bin
+  # - radiator
+  # - picture
+  # - water pitcher
+  # - pillar
+  # - light switch
+  # - bucket
+  # - storage organizer
+  # - vent
+  # - counter
+  # - ceiling light
+  # - case of water bottles
+  # - pipe
+  # - scale
+  # - recycling bin
+  # - clock
+  # - sign
+  # - folded chair
+  # - power strip
 
 # Or just comment it out for SCANNET 200 labels.
 # custom_labels: null
