@@ -33,3 +33,4 @@ dist
 .pytest_cacheAnaconda3-*.sh
 
 Anaconda3-2025.06-0-Linux-x86_64.sh
+test/

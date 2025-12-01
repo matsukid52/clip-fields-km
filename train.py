@@ -15,7 +15,8 @@ from torch.utils.data import DataLoader, Subset
 
 import wandb
 from dataloaders import (
-    R3DSemanticDataset,
+    #R3DSemanticDataset,
+    R3DSemanticDataset_nozip,
     DeticDenseLabelledDataset,
     ClassificationExtractor,
 )
@@ -201,7 +202,7 @@ def save(
     }
     torch.save(
         state_dict,
-        f"{save_directory}/implicit_scene_label_model_latest_v2.pt",
+        f"{save_directory}/implicit_scene_label_model_latest_test.pt",
     )
     return 0
 
@@ -210,7 +211,7 @@ def get_real_dataset(cfg):
     if cfg.use_cache:
         location_train_dataset = torch.load(cfg.saved_dataset_path)
     else:
-        view_dataset = R3DSemanticDataset(cfg.dataset_path, cfg.custom_labels)
+        view_dataset = R3DSemanticDataset_nozip(cfg.dataset_path, cfg.custom_labels)
         if cfg.sample_freq != 1:
             view_dataset = Subset(
                 view_dataset,
@@ -301,7 +302,7 @@ def main(cfg):
     )
 
     save_directory = cfg.save_directory
-    state_dict = "{}/implicit_scene_label_model_latest_v2.pt".format(save_directory)
+    state_dict = "{}/implicit_scene_label_model_latest_test.pt".format(save_directory)
 
     if os.path.exists("{}/".format(save_directory)) and os.path.exists(state_dict):
         logger.info(f"Resuming job from: {state_dict}")

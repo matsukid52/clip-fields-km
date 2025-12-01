@@ -49,7 +49,7 @@ label_model = GridCLIPModel(
     min_coords=min_coords,
 ).to(DEVICE)
 
-model_weights_path = "./clip_implicit_model/implicit_scene_label_model_latest.pt"
+model_weights_path = "./clip_implicit_model/implicit_scene_label_model_latest_test.pt"
 model_weights = torch.load(model_weights_path, map_location=DEVICE)
 label_model.load_state_dict(model_weights["model"])
 print(label_model)

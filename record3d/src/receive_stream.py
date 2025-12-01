@@ -6,6 +6,7 @@ import os
 import time
 import json
 import lzfse
+from datetime import datetime
 
 class Record3DReceiver:
     def __init__(self, output_dir="output"):
@@ -17,12 +18,12 @@ class Record3DReceiver:
         
         os.makedirs(self.rgbd_dir, exist_ok=True)
         
-        # Metadata storage
+        # メタデータの保存用変数
         self.poses = []
         self.frame_timestamps = []
         self.intrinsic_matrix = None
         self.init_pose = None
-        self.fps = 30 # Default, will try to get from device
+        self.fps = 30 # デフォルト値、デバイスから取得を試みる
         self.width = 0
         self.height = 0
 
@@ -54,15 +55,11 @@ class Record3DReceiver:
             print("No intrinsic matrix found, cannot save metadata.")
             return
 
-        # Prepare metadata dict
-        # Flatten K to list
+        # メタデータ辞書の作成
+        # K行列をリストに平坦化
         K_list = self.intrinsic_matrix.flatten().tolist()
         
-        # Poses: [qx, qy, qz, qw, tx, ty, tz]
-        # Record3D provides pose as quaternion + translation
-        # We need to make sure we store it in the format expected by clip-fields-km
-        # Looking at record3d.py: qx, qy, qz, qw, px, py, pz = self.poses[index]
-        
+        # 姿勢: [qx, qy, qz, qw, tx, ty, tz]
         metadata = {
             "w": self.width,
             "h": self.height,
@@ -85,14 +82,14 @@ class Record3DReceiver:
                 self.event.wait()
                 self.event.clear()
 
-                # Get data
+                # データの取得
                 depth = self.session.get_depth_frame()
                 rgb = self.session.get_rgb_frame()
                 confidence = self.session.get_confidence_frame()
                 camera_pose = self.session.get_camera_pose()
                 timestamp = time.time()
 
-                # Initialize metadata on first frame
+                # 最初のフレームでメタデータを初期化
                 if frame_idx == 0:
                     self.width = rgb.shape[1]
                     self.height = rgb.shape[0]
@@ -100,31 +97,31 @@ class Record3DReceiver:
                     self.intrinsic_matrix = np.array([[intrinsics.fx, 0, intrinsics.tx],
                                                       [0, intrinsics.fy, intrinsics.ty],
                                                       [0, 0, 1]])
-                    # Store init pose
+                    # 初期姿勢の保存
                     self.init_pose = [camera_pose.qx, camera_pose.qy, camera_pose.qz, camera_pose.qw,
                                       camera_pose.tx, camera_pose.ty, camera_pose.tz]
 
-                # Store pose
+                # 姿勢情報の保存
                 current_pose = [camera_pose.qx, camera_pose.qy, camera_pose.qz, camera_pose.qw,
                                 camera_pose.tx, camera_pose.ty, camera_pose.tz]
                 self.poses.append(current_pose)
                 self.frame_timestamps.append(timestamp)
 
-                # Save RGB
+                # RGB画像の保存
                 rgb_bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
                 cv2.imshow("Record3D Stream", rgb_bgr)
                 cv2.waitKey(1)
                 cv2.imwrite(os.path.join(self.rgbd_dir, f"{frame_idx}.jpg"), rgb_bgr)
 
-                # Save Depth (Compressed)
-                # Depth is float32
+                # 深度情報の保存（圧縮）
+                # Depthはfloat32形式
                 depth_bytes = depth.tobytes()
                 compressed_depth = lzfse.compress(depth_bytes)
                 with open(os.path.join(self.rgbd_dir, f"{frame_idx}.depth"), 'wb') as f:
                     f.write(compressed_depth)
 
-                # Save Confidence (Compressed)
-                # Confidence is uint8 (0, 1, 2)
+                # 信頼度情報の保存（圧縮）
+                # Confidenceはuint8 (0, 1, 2)
                 conf_bytes = confidence.tobytes()
                 compressed_conf = lzfse.compress(conf_bytes)
                 with open(os.path.join(self.rgbd_dir, f"{frame_idx}.conf"), 'wb') as f:
@@ -140,9 +137,38 @@ class Record3DReceiver:
             cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    receiver = Record3DReceiver(output_dir="/app/output")
+    base_output_dir = "./record3d"
+    
+    # 1. タイムスタンプ名のフォルダで開始 (例: 2023-10-27_15-30-00)
+    current_time_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    save_path = os.path.join(base_output_dir, current_time_str)
+    
+    print(f"Saving data to: {save_path}")
+
+    receiver = Record3DReceiver(output_dir=save_path)
     try:
         receiver.connect_to_device()
         receiver.start_processing_stream()
+        
+        # 2. リネーム処理（Ctrl+C後）
+        print("\n" + "="*50)
+        print(f"Data saved to temporary folder: {current_time_str}")
+        new_name = input(" Rename the folder? (press Enter to keep timestamp): ").strip()
+        
+        if new_name:
+            # フォルダ名の重複チェック
+            new_path = os.path.join(base_output_dir, new_name)
+            
+            if os.path.exists(new_path):
+                print(f"Error: Folder '{new_name}' already exists. Keeping original name: {current_time_str}")
+            else:
+                try:
+                    os.rename(save_path, new_path)
+                    print(f"Folder renamed to: {new_path}")
+                except OSError as e:
+                    print(f"Error renaming folder: {e}. Data kept in {save_path}")
+        else:
+            print(f"Folder name kept as: {save_path}")
+            
     except Exception as e:
         print(f"Error: {e}")
