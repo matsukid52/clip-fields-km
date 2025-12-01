@@ -90,17 +90,18 @@ train.py スクリプトを実行することで,サンプルデータを学習�
 watch -n -1 nvidia-smi
 
 python train.py dataset_path=nyu.r3d device=cuda
+
+python train.py dataset_path=test device=cuda
 ```
 
-学習が完了すると,`clip_implicit_model`下に学習データが出力される.
-```
-cd clip_implicit_model
-ls
+学習が完了すると,`clip_implicit_model`下に学習データが出力される. \
 #implicit_scene_label_model_latest.pt があればOK.
-```
 
-8. 実行 \
-`example.py`を実行すると結果が表示される. 
+
+8. 実行 
+```
+python3 example.py
+```
 <img src=/pictures/example1.png width="500px" height="500px">
 <img src=/pictures/example2.png width="500px" height="500px">
 <img src=/pictures/example3.png width="500px" height="500px">
