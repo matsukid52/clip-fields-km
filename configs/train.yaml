@@ -6,25 +6,28 @@ project: clip_field
 deterministic_id: false
 device: cuda
 use_cache: false
-# 学習時に1回のイテレーションで処理する3D点の数を指定するパラメータ
-# batch_size: 12544
-batch_size: 6084
+
+# 学習時に1回のイテレーションで処理する3D点の数を指定するパラメータ,"CUDA out of memory"が出た場合に調整する
+#batch_size: 12544
+batch_size: 6272
 
 # Dataset details
-dataset_path: test.r3d
+# dataset_path: nyu.r3d
+dataset_path: 2025-11-25--18-53-42
 cache_result: true
 cache_path: detic_labeled_dataset.pt
 saved_dataset_path: detic_labeled_dataset.pt
 
 # Data loading and labelling specs
-# 何フレームごとにサンプリングするか,5フレームごとに1フレームを使用する
-sample_freq: 5
+
+# 何フレームごとにサンプリングするか,5フレームに1回だけサンプリングする
+# sample_freq: 5
+sample_freq: 10
 
 detic_threshold: 0.4
 
-# 各検出されたオブジェクトマスク内の3D点を保持する確率,各オブジェクトの点群の約20%がランダムに選択されて学習に使用する
+# 物体ごとに取得する点群の割合
 subsample_prob: 0.1
-
 use_lseg: false
 use_extra_classes: false
 use_gt_classes_in_detic: true
@@ -41,12 +44,15 @@ log2_hashmap_size: 20
 # Training specs
 seed: 42
 epochs: 100
+# epochs: 20
 exp_decay_coeff: 0.5
 image_to_label_loss_ratio: 1.0
 label_to_image_loss_ratio: 1.0
 instance_loss_scale: 100.0
 epoch_size: 3e6
 dataparallel: false
+
+# データをGPUに送るための「下準備（画像の読み込みや変換）」をする裏方の人数
 # num_workers: 10
 num_workers: 0
 
@@ -92,18 +98,17 @@ hydra:
     partition: learnfair
 
 # Add any custom labels you want here
-custom_labels:
-    - desk
-    - chair
-    - trash can
-    - vending machine
-    - vase
-    - vacuum cleaner
-    - water heater
-    - microwave oven
-    - signboard
+#custom_labels:
+    # - chair
+    # - desk
+    # - trash can
+    # - vending machine
+    # - vase
+    # - vacuum cleaner
+    # - water heater
+    # - microwave oven
+    # - signboard
 
-    
   # - kitchen counter
   # - kitchen cabinet
   # - stove
@@ -199,4 +204,4 @@ custom_labels:
   # - power strip
 
 # Or just comment it out for SCANNET 200 labels.
-# custom_labels: null
+custom_labels: null

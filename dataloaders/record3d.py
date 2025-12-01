@@ -72,6 +72,8 @@ class R3DSemanticDataset(Dataset):
 
         if depth_img.shape[0] == 960 * 720:
             depth_img = depth_img.reshape((960, 720))  # For a FaceID camera 3D Video
+        elif depth_img.shape[0] == 640 * 480:
+            depth_img = depth_img.reshape((640, 480))  # For High Quality Depth
         else:
             depth_img = depth_img.reshape((256, 192))  # For a LiDAR 3D Video
         return depth_img
@@ -81,8 +83,11 @@ class R3DSemanticDataset(Dataset):
             raw_bytes = depth_fh.read()
             decompressed_bytes = liblzfse.decompress(raw_bytes)
             depth_img = np.frombuffer(decompressed_bytes, dtype=np.uint8)
+        
         if depth_img.shape[0] == 960 * 720:
             depth_img = depth_img.reshape((960, 720))  # For a FaceID camera 3D Video
+        elif depth_img.shape[0] == 640 * 480:
+            depth_img = depth_img.reshape((640, 480))  # For High Quality Depth
         else:
             depth_img = depth_img.reshape((256, 192))  # For a LiDAR 3D Video
         return depth_img
@@ -96,7 +101,13 @@ class R3DSemanticDataset(Dataset):
             conf_filepath = f"rgbd/{i}.conf"
 
             depth_img = self.load_depth(depth_filepath)
-            confidence = self.load_conf(conf_filepath)
+            
+            # Try loading confidence, otherwise fill with 2 (high confidence)
+            try:
+                confidence = self.load_conf(conf_filepath)
+            except KeyError:
+                confidence = np.full(depth_img.shape, 2, dtype=np.uint8)
+                
             rgb_img = self.load_image(rgb_filepath)
 
             # Now, convert depth image to real world XYZ pointcloud.
