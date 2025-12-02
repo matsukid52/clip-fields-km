@@ -1,4 +1,4 @@
 record3d
-#numpy
-#opencv-python-headless
+numpy == 1.22.2
+opencv-python
 lzfse
