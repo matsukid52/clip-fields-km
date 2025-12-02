@@ -13,7 +13,7 @@ batch_size: 6272
 
 # Dataset details
 # dataset_path: nyu.r3d
-dataset_path: test.r3d
+dataset_path: 2025-12-02--12-55-15.r3d
 cache_result: true
 cache_path: detic_labeled_dataset.pt
 saved_dataset_path: detic_labeled_dataset.pt
@@ -98,16 +98,16 @@ hydra:
     partition: learnfair
 
 # Add any custom labels you want here
-custom_labels:
-    - chair
-    - desk
-    - trash can
-    - vending machine
-    - vase
-    - vacuum cleaner
-    - water heater
-    - microwave oven
-    - signboard
+# custom_labels:
+#     - chair
+#     - desk
+#     - trash can
+#     - vending machine
+#     - vase
+#     - vacuum cleaner
+#     - water heater
+#     - microwave oven
+#     - signboard
 
   # - kitchen counter
   # - kitchen cabinet
@@ -204,4 +204,4 @@ custom_labels:
   # - power strip
 
 # Or just comment it out for SCANNET 200 labels.
-# custom_labels: null
+custom_labels: null

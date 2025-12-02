@@ -3,7 +3,6 @@ import os
 import pprint
 import random
 from typing import Dict, Union
-
 import hydra
 import numpy as np
 import torch
@@ -12,11 +11,10 @@ import torchmetrics
 import tqdm
 from omegaconf import OmegaConf
 from torch.utils.data import DataLoader, Subset
-
 import wandb
 from dataloaders import (
-    #R3DSemanticDataset,
-    R3DSemanticDataset_nozip,
+    R3DSemanticDataset,
+    #R3DSemanticDataset_nozip,
     DeticDenseLabelledDataset,
     ClassificationExtractor,
 )
@@ -37,14 +35,12 @@ METRICS = {
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-
 def seed_everything(seed: int):
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
-
 
 def train(
     clip_train_loader: DataLoader,
@@ -117,7 +113,6 @@ def train(
             image_label_index,
             language_label_mask,
         )
-
         # Now figure out semantic segmentation.
         with torch.no_grad():
             class_probs = classifier.calculate_classifications(
@@ -142,12 +137,10 @@ def train(
                 if metric_calculators.get("semantic"):
                     for _, calculators in metric_calculators["semantic"].items():
                         _ = calculators(masked_class_prob, masked_labels)
-
         contrastive_loss = (
             image_to_label_loss_ratio * contrastive_loss_images
             + label_to_image_loss_ratio * contrastive_loss_labels
         )
-
         optim.zero_grad(set_to_none=True)
         contrastive_loss.backward()
         optim.step()
@@ -160,7 +153,6 @@ def train(
         total_classification_loss += classification_loss.detach().cpu().item()
         total_loss += contrastive_loss.detach().cpu().item()
         total_samples += 1
-
     to_log = {
         "train_avg/contrastive_loss_labels": label_loss / total_samples,
         "train_avg/contrastive_loss_images": image_loss / total_samples,
@@ -170,6 +162,7 @@ def train(
         .cpu()
         .item(),
     }
+    
     for metric_dict in metric_calculators.values():
         for metric_name, metric in metric_dict.items():
             try:
@@ -182,7 +175,6 @@ def train(
     wandb.log(to_log)
     logger.debug(pprint.pformat(to_log, indent=4, width=1))
     return total_loss
-
 
 def save(
     labelling_model: Union[ImplicitDataparallel, GridCLIPModel],
@@ -202,7 +194,7 @@ def save(
     }
     torch.save(
         state_dict,
-        f"{save_directory}/implicit_scene_label_model_latest_test.pt",
+        f"{save_directory}/implicit_scene_label_model_latest_test_cocha.pt",
     )
     return 0
 
@@ -211,7 +203,7 @@ def get_real_dataset(cfg):
     if cfg.use_cache:
         location_train_dataset = torch.load(cfg.saved_dataset_path)
     else:
-        view_dataset = R3DSemanticDataset_nozip(cfg.dataset_path, cfg.custom_labels)
+        view_dataset = R3DSemanticDataset(cfg.dataset_path, cfg.custom_labels)
         if cfg.sample_freq != 1:
             view_dataset = Subset(
                 view_dataset,
@@ -302,7 +294,7 @@ def main(cfg):
     )
 
     save_directory = cfg.save_directory
-    state_dict = "{}/implicit_scene_label_model_latest_test.pt".format(save_directory)
+    state_dict = "{}/implicit_scene_label_model_latest_test_cocha.pt".format(save_directory)
 
     if os.path.exists("{}/".format(save_directory)) and os.path.exists(state_dict):
         logger.info(f"Resuming job from: {state_dict}")

@@ -1,9 +1,6 @@
 import json
 from pathlib import Path
 from typing import List, Optional
-# ZipFileは使用しないため削除
-# from zipfile import ZipFile
-
 import liblzfse
 import numpy as np
 import open3d as o3d
@@ -11,9 +8,7 @@ import tqdm
 from PIL import Image
 from quaternion import as_rotation_matrix, quaternion
 from torch.utils.data import Dataset
-
 from dataloaders.scannet_200_classes import CLASS_LABELS_200
-
 
 class R3DSemanticDataset_nozip(Dataset):
     def __init__(
@@ -94,7 +89,7 @@ class R3DSemanticDataset_nozip(Dataset):
         full_path = self._path / conf_filepath
         
         if not full_path.exists():
-             return None
+            return None
 
         with open(full_path, 'rb') as f:
             raw_bytes = f.read()
