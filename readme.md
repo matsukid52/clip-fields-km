@@ -16,7 +16,8 @@ https://user-images.githubusercontent.com/3000253/195213301-43eae6e8-4516-4b8d-9
 - CUDA：12.4
 - PyTorch:2.4.1（2025現在のHSR）
 - NumPy：1.22.2 
-- [Record3D](https://record3d.app/) 
+- [Record3D](https://record3d.app/features) 
+- [Record3Dのgithub](https://github.com/marek-simonik/record3d)
 
 
 1. このリポジトリをクローンする
