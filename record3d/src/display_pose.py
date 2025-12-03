@@ -3,7 +3,6 @@ from record3d import Record3DStream
 import cv2
 from threading import Event
 
-
 class DemoApp:
     def __init__(self):
         self.event = Event()
@@ -43,17 +42,12 @@ class DemoApp:
                          [        0,         0,         1]])
 
     def start_processing_stream(self):
-        
-        # --- ウィンドウの初期位置設定 ---
-        # ループに入る前にウィンドウを作成し、位置を指定します (x, y)
-        # RGBウィンドウを左上(100, 100)に配置
+        # ウィンドウの初期位置設定,RGBウィンドウを(x, y) = 左上(100, 100)に配置
         cv2.namedWindow('RGB')
-        cv2.moveWindow('RGB', 100, 100)
-
+        cv2.moveWindow('RGB', 100, 100)      
         # DepthウィンドウをRGBの右側(800, 100)に配置
         cv2.namedWindow('Depth')
         cv2.moveWindow('Depth', 600, 100)     
-        # -----------------------------
 
         while True:
             self.event.wait()  # Wait for new frame to arrive
@@ -76,10 +70,10 @@ class DemoApp:
 
             rgb = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
-            # --- 位置姿勢（Pose）の可視化 ---
+            # 位置姿勢（Pose）可視化
             pos_str = f"Pos: x={camera_pose.tx:.3f}, y={camera_pose.ty:.3f}, z={camera_pose.tz:.3f}"
             
-            # 改行して回転を表示
+            # 改行して回転を可視化
             rot_str1 = f"Rot: qx={camera_pose.qx:.3f}, qy={camera_pose.qy:.3f}"
             rot_str2 = f"     qz={camera_pose.qz:.3f}, qw={camera_pose.qw:.3f}"
             
@@ -89,10 +83,9 @@ class DemoApp:
                         0.7, (0, 0, 255), 2, cv2.LINE_AA)
             cv2.putText(rgb, rot_str2, (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 
                         0.7, (0, 0, 255), 2, cv2.LINE_AA)
-            # -----------------------------
 
             # Show the RGBD Stream
-            # ※既にnamedWindowで作成済みなので、ここで画像が更新されます
+            # 既にnamedWindowで作成済みなので、ここで画像が更新される
             cv2.imshow('RGB', rgb)
             cv2.imshow('Depth', depth)
 
