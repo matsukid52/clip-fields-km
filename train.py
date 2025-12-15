@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader, Subset
 import wandb
 from dataloaders import (
     R3DSemanticDataset,
-    #R3DSemanticDataset_nozip,
+    # R3DSemanticDataset_lessram,
     DeticDenseLabelledDataset,
     ClassificationExtractor,
 )
@@ -194,7 +194,7 @@ def save(
     }
     torch.save(
         state_dict,
-        f"{save_directory}/implicit_scene_label_model_latest_test_cocha.pt",
+        f"{save_directory}/implicit_scene_label_model_1F.pt",
     )
     return 0
 
@@ -294,7 +294,7 @@ def main(cfg):
     )
 
     save_directory = cfg.save_directory
-    state_dict = "{}/implicit_scene_label_model_latest_test_cocha.pt".format(save_directory)
+    state_dict = "{}/implicit_scene_label_model_1F.pt".format(save_directory)
 
     if os.path.exists("{}/".format(save_directory)) and os.path.exists(state_dict):
         logger.info(f"Resuming job from: {state_dict}")

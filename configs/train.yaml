@@ -13,21 +13,22 @@ batch_size: 6272
 
 # Dataset details
 # dataset_path: nyu.r3d
-dataset_path: 2025-12-02--12-55-15.r3d
+dataset_path: 2025-12-12--18-59-46.r3d
 cache_result: true
 cache_path: detic_labeled_dataset.pt
 saved_dataset_path: detic_labeled_dataset.pt
 
 # Data loading and labelling specs
 
-# 何フレームごとにサンプリングするか,5フレームに1回だけサンプリングする
+# 「5フレームに1回だけ」データを読み込む>これを増やして読み込む枚数を減らす
 # sample_freq: 5
-sample_freq: 10
+sample_freq: 20
 
 detic_threshold: 0.4
 
-# 物体ごとに取得する点群の割合
-subsample_prob: 0.1
+# 取得した点群のうち、保持する割合
+subsample_prob: 0.2
+# subsample_prob: 0.1
 use_lseg: false
 use_extra_classes: false
 use_gt_classes_in_detic: true
@@ -44,7 +45,6 @@ log2_hashmap_size: 20
 # Training specs
 seed: 42
 epochs: 100
-# epochs: 20
 exp_decay_coeff: 0.5
 image_to_label_loss_ratio: 1.0
 label_to_image_loss_ratio: 1.0
@@ -98,17 +98,8 @@ hydra:
     partition: learnfair
 
 # Add any custom labels you want here
-# custom_labels:
-#     - chair
-#     - desk
-#     - trash can
-#     - vending machine
-#     - vase
-#     - vacuum cleaner
-#     - water heater
-#     - microwave oven
-#     - signboard
-
+custom_labels:
+  # 本家
   # - kitchen counter
   # - kitchen cabinet
   # - stove
@@ -202,6 +193,26 @@ hydra:
   # - sign
   # - folded chair
   # - power strip
+  
+  # １F カフェテリア
+  - chair
+  - desk
+  - trash can
+  - vending machine
+  - vase
+  - vacuum cleaner
+  - water heater
+  - microwave oven
+  - signboard
+
+  # 12階会議室
+  # - long_table
+  # - short_teable
+  # - chair
+  # - TV
+  # - whiteboard
+  # - bookshelf
+  # - Washroom
 
 # Or just comment it out for SCANNET 200 labels.
-custom_labels: null
+# custom_labels: null

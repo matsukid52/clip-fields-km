@@ -20,21 +20,24 @@ from grid_hash_model import GridCLIPModel
 
 from misc import MLP
 
-
 import pandas as pd
 import pyntcloud
 from pyntcloud import PyntCloud
 import clip
 
+from pyntcloud.plot.common import get_colors
+
+from matplotlib.patches import Circle
+import mpl_toolkits.mplot3d.art3d as art3d
+import matplotlib.cm as cm
+
 DEVICE = "cuda"
 model, preprocess = clip.load("ViT-B/32", device=DEVICE)
 sentence_model = SentenceTransformer("all-mpnet-base-v2")
 
-
 training_data = torch.load("./detic_labeled_dataset.pt")
 max_coords, _ = training_data._label_xyz.max(dim=0)
 min_coords, _ = training_data._label_xyz.min(dim=0)
-
 
 label_model = GridCLIPModel(
     image_rep_size=training_data[0]["clip_image_vector"].shape[-1],
@@ -49,16 +52,15 @@ label_model = GridCLIPModel(
     min_coords=min_coords,
 ).to(DEVICE)
 
-model_weights_path = "./clip_implicit_model/implicit_scene_label_model_latest_test.pt"
+model_weights_path = "./clip_implicit_model/implicit_scene_label_model_1F.pt"
 model_weights = torch.load(model_weights_path, map_location=DEVICE)
 label_model.load_state_dict(model_weights["model"])
 print(label_model)
 print("Loaded model from", model_weights_path)
 
-
 batch_size = 30_000
 points_dataloader = DataLoader(
-    training_data._label_xyz, batch_size=batch_size, num_workers=10,
+    training_data._label_xyz, batch_size=batch_size, num_workers=0,
 )
 print("Created data loader", points_dataloader)
 
@@ -119,9 +121,7 @@ df = pd.DataFrame(
     columns=["x", "y", "z", "red", "green", "blue"]
 )
 cloud = PyntCloud(df)
-
 print("Point cloud", cloud)
-
 
 # Now figure out the points that are far enough.
 coordinates = cloud.points
@@ -154,14 +154,45 @@ print("Found some valid points:", valid_points.shape)
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 queries = [
-    # Literal
+    # Literal (具体的な物体名)
+    # 本家
     "Stack of plates",
     "microwave",
     "the fridghe",  # intentional misspelling
     "coffee machine",
     "sink",
+    
+    # 1Fカフェテリア
+    "Table",
+    "Chair",
+    "Trash can",
+    "Vending machine",
+    "Vase",
+    "Vaccum cleaner",
+    "Water heater",
+    "Microwave",
+    "Signboard",
+    
+    # 12階会議室
+    # "long_table",
+    # "short_teable",
+    # "chair",
+    # "TV",
+    # "whiteboard",
+    # "bookshelf",
+    # "Washroom",
+    # "desk",
+    # "table",
+    # "chair",
+    # "laptop",
+    # "monitor",
+    # "keyboard",
+    # "mouse",
+    # "bookshelf", 
+    # "person",
 
-    # Visual
+
+    # Visual (視覚的特徴: visual=True 推奨)
     # "white ceramic bowl",
     # "red plastic bowl",
     # "red coffee machine",
@@ -171,15 +202,17 @@ queries = [
     # "purple poster",
     # "toaster oven",
 
-    # Semantic
-    "wash my dishes",
-    "wash my hand",
-    "throw my trash",
-    "store my food",
-    "put away my leftovers",
-    "fill out water bottle",
-    "make some coffee",
-    "warm up my lunch",
+
+    # Semantic (意味的なアクション: visual=False 推奨)
+    # 本家
+    # "wash my dishes",
+    # "wash my hand",
+    # "throw my trash",
+    # "store my food",
+    # "put away my leftovers",
+    # "fill out water bottle",
+    # "make some coffee",
+    # "warm up my lunch",
 ]
 # TODO: change to visual = True for visual queries.
 visual = False
@@ -192,10 +225,7 @@ print(q.shape)
 alpha = q.detach().cpu().numpy()
 plt.hist(alpha, 100, density=True)
 plt.title(f"Alignment over the dataset for query: {queries[0]}")
-
 plt.show()
-
-
 os.makedirs("visualized_pointcloud", exist_ok=True)
 
 max_points = []
@@ -233,14 +263,6 @@ for query, q in zip(queries, alignment_q):
     visual_str = "_visual" if visual else ""
     thres_str = "_thres" if use_threshold else ""
     o3d.io.write_point_cloud(f"visualized_pointcloud/model_nyu_kitchen_{query}{visual_str}{thres_str}.ply", merged_downpcd)
-    
-    
-
-from pyntcloud.plot.common import get_colors
-
-from matplotlib.patches import Circle
-import mpl_toolkits.mplot3d.art3d as art3d
-import matplotlib.cm as cm
 
 
 def set_proper_aspect_ratio(ax):
@@ -311,8 +333,6 @@ plot_with_matplotlib(
     title="Found query dot product maximizing points",
     goto=max_points_goto,
 )
-
-
 
 plot_with_matplotlib(
     cloud,
